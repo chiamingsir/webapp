@@ -59,13 +59,6 @@ async def execute(sql, args, autocommit=True):
             raise e
         return affected
 
-# from orm import Model, IntegerField, StringField
-#
-# class User(Model):
-#     __tabel__ = 'users'  # property of class
-#     id = IntegerField(primary_key=True)
-#     name = StringField()
-
 
 class Field(object):
     def __init__(self, name, column_type, primary_key, default):
