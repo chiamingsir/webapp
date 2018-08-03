@@ -16,11 +16,10 @@ def index(request):
     return web.Response(body=b'<h1>Home Page</h1>', content_type='text/html')
 
 
-@asyncio.coroutine  # decorator to mark generator-based coroutines
-def init(loop):
+async def init(loop):  # decorator to mark generator-based coroutines
     app = web.Application(loop=loop)
     app.router.add_route('GET', '/', index)
-    server = yield from loop.create_server(app.make_handler(), '127.0.0.1', 9000)  # create TCP server
+    server = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)  # create TCP server
     logging.info('server started at http://127.0.0.1:9000...')
     return server
 
