@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import aiomysql
-import asyncio
+# import asyncio
 import logging
 
 
@@ -15,12 +15,12 @@ async def create_pool(loop, **kw):
     global __pool
     __pool = await aiomysql.create_pool(
         host=kw.get('host', 'localhost'),
-        port=kw.get('port',3306),
+        port=kw.get('port', 3306),
         user=kw.get['user'],
         password=kw.get['password'],
         db=kw.get['db'],
-        charset=kw.get('charset','utf8'),
-        autocommit=kw.get('autocommit',True),
+        charset=kw.get('charset', 'utf8'),
+        autocommit=kw.get('autocommit', True),
         maxsize=kw.get('maxsize', 10),
         minsize=kw.get('minsize', 1),
         loop=loop
@@ -58,6 +58,13 @@ async def execute(sql, args, autocommit=True):
                 await connect.rollback()
             raise e
         return affected
+
+
+def create_args_string(num):
+    L = []
+    for n in range(num):
+        L.append('?')
+    return ', '.join(L)
 
 
 class Field(object):
@@ -106,7 +113,7 @@ class ModelMetaclass(type):
         fields = []
         primaryKey = None
         for k, v in attrs.items():
-            if (isinstance(v, Field)):
+            if isinstance(v, Field):
                 logging.info('  found mapping: %s ==> %s' % (k, v))
                 mappings[k] = v
                 if v.primary_key:
