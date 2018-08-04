@@ -16,9 +16,9 @@ async def create_pool(loop, **kw):
     __pool = await aiomysql.create_pool(
         host=kw.get('host', 'localhost'),
         port=kw.get('port', 3306),
-        user=kw.get['user'],
-        password=kw.get['password'],
-        db=kw.get['db'],
+        user=kw.get('user'),
+        password=kw.get('password'),
+        db=kw.get('db'),
         charset=kw.get('charset', 'utf8'),
         autocommit=kw.get('autocommit', True),
         maxsize=kw.get('maxsize', 10),
@@ -119,22 +119,23 @@ class ModelMetaclass(type):
                 if v.primary_key:
                     if primaryKey:
                         raise BaseException('Duplicate primary key for field: %s' % k)
-                    else:
-                        fields.append(k)
-       if not primaryKey:
-           raise BaseException('Primary key not found.')
-       for k in mappings.keys():
-           attrs.pop(k)
-       escape_fields = list(map(lambda f: '`%s`' % f, fields))
-       attrs['__mappings__'] = mappings
-       attrs['__table__'] = tableName
-       attrs['__primary_key__'] = primaryKey
-       attrs['__fields__'] = fields
-       attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escape_fields), tableName)
-       attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escape_fields), primaryKey, create_args_string(len(escape_fields) + 1))
-       attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primaryKey)
-       attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (tableName, primaryKey)
-       return type.__new__(cls, name, bases, attrs)
+                    primaryKey = k
+                else:
+                    fields.append(k)
+        if not primaryKey:
+            raise BaseException('Primary key not found.')
+        for k in mappings.keys():
+            attrs.pop(k)
+        escape_fields = list(map(lambda f: '`%s`' % f, fields))
+        attrs['__mappings__'] = mappings
+        attrs['__table__'] = tableName
+        attrs['__primary_key__'] = primaryKey
+        attrs['__fields__'] = fields
+        attrs['__select__'] = 'select `%s`, %s from `%s`' % (primaryKey, ', '.join(escape_fields), tableName)
+        attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (tableName, ', '.join(escape_fields), primaryKey, create_args_string(len(escape_fields) + 1))
+        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (tableName, ', '.join(map(lambda f: '`%s`=?' % (mappings.get(f).name or f), fields)), primaryKey)
+        attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (tableName, primaryKey)
+        return type.__new__(cls, name, bases, attrs)
 
 
 class Model(dict, metaclass=ModelMetaclass):
@@ -187,7 +188,7 @@ class Model(dict, metaclass=ModelMetaclass):
                 args.extend(limit)
             else:
                 raise ValueError('Invalid limit value: %s' % str(limit))
-        rs = await select(' '.join(sql), args, 1)
+        rs = await select(' '.join(sql), args)
         return [cls(**r) for r in rs]
 
     @classmethod
@@ -213,9 +214,18 @@ class Model(dict, metaclass=ModelMetaclass):
     async def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append(self.getValueOrDefault(self.__primary_key__))
+        rows = await execute(self.__insert__, args)
+        if rows != 1:
+            logging.warning('failed to insert record: affected rows: %s' % rows)
+
+
+    async def update(self):
+        args = list(map(self.getValue, self.__fields__))
+        args.append(self.getValue(self.__primary_key__))
         rows = await execute(self.__update__, args)
         if rows != 1:
             logging.warning('failed to update by primary key: affected rows: %s' % rows)
+
 
     async def remove(self):
         args = [self.getValue(self.__primary_key__)]
