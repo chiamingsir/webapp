@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import aiomysql
-# import asyncio
 import logging
 
 
@@ -211,6 +210,7 @@ class Model(dict, metaclass=ModelMetaclass):
             return None
         return cls(**rs[0])
 
+    
     async def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append(self.getValueOrDefault(self.__primary_key__))
