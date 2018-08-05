@@ -1,8 +1,8 @@
 #!usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import aiomysql
 # import asyncio
+import aiomysql
 import logging
 
 
@@ -218,14 +218,12 @@ class Model(dict, metaclass=ModelMetaclass):
         if rows != 1:
             logging.warning('failed to insert record: affected rows: %s' % rows)
 
-
     async def update(self):
         args = list(map(self.getValue, self.__fields__))
         args.append(self.getValue(self.__primary_key__))
         rows = await execute(self.__update__, args)
         if rows != 1:
             logging.warning('failed to update by primary key: affected rows: %s' % rows)
-
 
     async def remove(self):
         args = [self.getValue(self.__primary_key__)]
