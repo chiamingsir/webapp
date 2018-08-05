@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import orm
+
 from models import User, Blog, Comment
+import orm
+
 
 async def test(loop):
     await orm.create_pool(loop, user='www-data', password='www-data', db='webapp')
@@ -18,4 +20,4 @@ async def show(loop):
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(asyncio.wait([test(loop), show(loop)]))
-loop.run_forever
+loop.run_forever()
