@@ -17,8 +17,8 @@ import coroweb
 logging.basicConfig(level=logging.INFO)  # specify the level of root logger
 
 
-def init_jinjia2(app, **kw):
-    logging.info('init jinjia...')
+def init_jinja2(app, **kw):
+    logging.info('init jinja...')
     options = dict(
         autoescape=kw.get('autoescape', True),
         block_start_string=kw.get('block_start_string', '{%'),
@@ -30,7 +30,7 @@ def init_jinjia2(app, **kw):
     path = kw.get('path', None)
     if path is None:
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-    logging.info('set jinjia2 template path: %s' % path)
+    logging.info('set jinja2 template path: %s' % path)
     env = Environment(loader=FileSystemLoader(path), **options)
     filters = kw.get('filters', None)
     if filters is not None:
@@ -120,7 +120,7 @@ def datetime_filter(t):
 async def init(loop):  # decorator to mark generator-based coroutines
     await orm.create_pool(loop, user='www-data', password='www-data', db='webapp')
     app = web.Application(loop=loop, middlewares=[logger_factory, response_factory])
-    init_jinjia2(app, filters=dict(datetime=datetime_filter))
+    init_jinja2(app, filters=dict(datetime=datetime_filter))
     coroweb.add_routes(app, 'handlers')
     coroweb.add_static(app)
     server = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)  # create TCP server
