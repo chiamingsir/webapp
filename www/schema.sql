@@ -1,10 +1,12 @@
 -- schema.sql
 
 drop database if exists webapp;
-
 create database webapp;
 
 use webapp;
+
+drop user if exists 'www-data'@'localhost';
+create user 'www-data'@'localhost' identified by 'www-data';
 
 grant select, insert, update, delete on webapp.* to 'www-data'@'localhost' identified by 'www-data';
 
