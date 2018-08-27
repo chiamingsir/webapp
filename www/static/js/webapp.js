@@ -171,7 +171,6 @@ function toSmartDate(timestamp) {
         s = Math.floor(t / 3600000);
         s += s > 1 ? 'hours ago' : 'hour ago';
     }
-    }
     else if (t >= 60000) {
         s = Math.floor(t / 60000);
         s += s > 1 ? 'mins ago' : 'min ago';
