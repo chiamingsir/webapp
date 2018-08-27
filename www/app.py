@@ -120,7 +120,7 @@ def datetime_filter(t):
 
 async def init(loop):  # decorator to mark generator-based coroutines
     await create_pool(loop, **configs.db)
-    app = web.Application(loop=loop, middlewares=[logger_factory, response_factory])
+    app = web.Application(middlewares=[logger_factory, response_factory])
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
     add_static(app)
