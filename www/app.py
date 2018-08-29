@@ -11,8 +11,9 @@ import json
 import time
 import logging
 
-import orm
-import coroweb
+from orm import create_pool
+from config import configs
+from coroweb import add_routes, add_static
 
 logging.basicConfig(level=logging.INFO)  # specify the level of root logger
 
@@ -77,7 +78,7 @@ async def response_factory(app, handler):
             resp.content_type = 'text/html;charset=utf-8'
             return resp
         if isinstance(r, dict):
-            template = r.get('__template__', None)
+            template = r.get('__template__')
             if template is None:
                 resp = web.Response(body=json.dumps(r, ensure_ascii=False, default=lambda o: o.__dict__).encode('utf-8'))
                 resp.content_type = 'application/json;charset=utf-8'
@@ -94,7 +95,7 @@ async def response_factory(app, handler):
                 return web.Response(r, str(m))
         # default:
         resp = web.Response(body=str(r).encode('utf-8'))
-        resp.content_type = 'text/html;charset=utf-8 '
+        resp.content_type = 'text/plain;charset=utf-8 '
         return resp
     return response
 
@@ -118,11 +119,11 @@ def datetime_filter(t):
 
 
 async def init(loop):  # decorator to mark generator-based coroutines
-    await orm.create_pool(loop, user='www-data', password='www-data', db='webapp')
-    app = web.Application(loop=loop, middlewares=[logger_factory, response_factory])
+    await create_pool(loop, **configs.db)
+    app = web.Application(middlewares=[logger_factory, response_factory])
     init_jinja2(app, filters=dict(datetime=datetime_filter))
-    coroweb.add_routes(app, 'handlers')
-    coroweb.add_static(app)
+    add_routes(app, 'handlers')
+    add_static(app)
     server = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)  # create TCP server
     logging.info('server started at http://127.0.0.1:9000...')
     return server
