@@ -124,11 +124,17 @@ async def init(loop):  # decorator to mark generator-based coroutines
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
     add_static(app)
-    server = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)  # create TCP server
+    runner = web.AppRunner(app)
+    await runner.setup()
+    server = await loop.create_server(runner.server, '127.0.0.1', 9000)  # create TCP server
     logging.info('server started at http://127.0.0.1:9000...')
     return server
 
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init(loop))
-loop.run_forever()
+try:
+    loop.run_forever()
+except KeyboardInterrupt:
+    logging.info("server shutted down")
+loop.run_until_complete(loop.shutdown_asyncgens())
