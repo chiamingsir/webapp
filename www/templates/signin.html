@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in - Python Web App</title>
+  <link rel="stylesheet" href="/static/css/uikit.min.css">
+  <link rel="stylesheet" href="/static/css/webapp.css">
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/uikit.min.js"></script>
+  <script src="/static/js/uikit-icons.min.js"></script>
+  <script src="/static/js/vue.min.js"></script>
+  <script src="/static/js/webapp.js"></script>
+  <script>
+
+$(function() {
+  var vmAuth = new Vue({
+    el: '#vm';
+    data: {
+      email: '',
+      passwd: '',
+    },
+    methods: {
+      submit: function(event) {
+        event.preventDefault();
+        var $form = $('vm'),
+            email = this.email.trim().toLowerCase(),
+            data = {
+              email: email,
+              passwd: this.passwd==='' ? '' : CryptoJS.SHA1(email + ':' + this.passwd).toString()
+            }
+        $form.postJSON('/api/authenticate', data, function(err, result) {
+          if (!err) {
+            location.assign('/');
+          }
+        });
+      }
+    }
+  });
+});
+
+  </script>
+</head>
+<body>
+  <input v-model="email" name="email" type="text" placeholder="email" maxlength="50">
+  <input v-model="passwd", name="passwd" type="password", placeholder="password" maxlength="50">
+</body>
+</html>
