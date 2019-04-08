@@ -45,13 +45,13 @@ $(function() {
             <form id="vm" v-on:submit.prevent="submit" class="uk-panel uk-panel-box uk-form">
                 <div class="uk-alert uk-alert-danger uk-hidden"></div>
                 <div class="uk-form-row">
-                    <input v-model="email" name="email" maxlength=50 class="uk-width-1-1 uk-form-large" type="text" placeholder="Email Address">
+                    <input v-model="email" name="email" autocomplete="current-password" maxlength=50 class="uk-width-1-1 uk-form-large" type="text" placeholder="Email Address">
                 </div>
                 <div class="uk-form-row">
-                    <input v-model="passwd" name="passwd" maxlength=50 class="uk-width-1-1 uk-form-large" type="password" placeholder="Password">
+                    <input v-model="passwd" name="passwd" autocomplete="current-password" maxlength=50 class="uk-width-1-1 uk-form-large" type="password" placeholder="Password">
                 </div>
                 <div class="uk-form-row">
-                    <a class="uk-width-1-1 uk-button uk-button-primary uk-button-large" href="#">Login</a>
+                    <button type="submit" class="uk-width-1-1 uk-button uk-button-primary uk-button-large"><i :uk-icon="'icon: sign-in'"></i> Login</button>
                 </div>
                 <div class="uk-form-row uk-text-small">
                     <label class="uk-float-left"><input type="checkbox"> Remember Me</label>
