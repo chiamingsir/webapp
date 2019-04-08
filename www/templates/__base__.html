@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="/static/css/uikit.min.css">
     <link rel="stylesheet" href="/static/css/webapp.css">
     <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/uikit.min.js"></script>
-    <script src="/static/js/uikit-icons.min.js"></script>
     <script src="/static/js/vue.min.js"></script>
     <script src="/static/js/webapp.js"></script>
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/uikit-icons.min.js"></script>
     {% block beforehead %}<!-- before head -->{% endblock %}
 </head>
 
@@ -24,8 +24,8 @@
                 <li><a target="_blank" href="#"><i class="uk-icon" uk-icon="icon: bookmark"></i>Tutorial</a></li>
                 <li><a target="_blank" href="#"><i class="uk-icon" uk-icon="icon: code"></i>Code</a></li>
             </ul>
-            <div class="nk-navbar-flip">
-                <ul class="nk-navbar-nav">
+            <div class="uk-navbar-flip">
+                <ul class="uk-navbar-nav">
                     {% if __user__ %}
                     <li class="uk-parent" data-uk-dropdown>
                         <a href="#0"><i class="uk-icon-user"></i>{{ __user__.name }}</a>
@@ -36,8 +36,8 @@
                         </div>
                     </li>
                     {% else %}
-                    <li><a href="/signin"><i class="uk-icon-sign-in"></i>Sign in</a></li>
-                    <li><a href="/register"><i class="ul-icon-edit"></i>Register</a></li>
+                    <li><a href="/signin"><i class="uk-icon" uk-icon="icon: sign-in"></i>Sign in</a></li>
+                    <li><a href="/register"><i class="uk-icon" uk-icon="icon: file-edit"></i>Register</a></li>
                     {% endif %}
                 </ul>
             </div>
