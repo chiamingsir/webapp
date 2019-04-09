@@ -15,7 +15,7 @@ async def test(loop):
 async def show(loop):
     await asyncio.sleep(1)
     await orm.create_pool(loop, user='www-data', password='www-data', db='webapp')
-    rs = await User.findAll();
+    rs = await User.findAll()
     print('Find User: %s' % rs)
 
 loop = asyncio.get_event_loop()
